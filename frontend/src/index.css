@@ -1,0 +1,142 @@
+:root {
+  color-scheme: light dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #1f1f1f; /* tmavé pozadí mimo karty */
+  color: #eaeaea;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell,
+    "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden; /* žádný scrollbar na desktopu */
+}
+
+/* kořen aplikace – vyplní viewport */
+.app {
+  height: 100vh; /* fallback */
+  height: 100dvh; /* správná výška i na mobilech */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* typografie */
+.title {
+  font-weight: 800;
+  margin: 0;
+  line-height: 1.1;
+  font-size: clamp(28px, 5vw, 56px);
+}
+.subtitle {
+  margin: 0;
+  color: #a7b0b9;
+}
+
+/* bílé karty s černým textem */
+.card {
+  background: #fff;
+  color: #111;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+/* oblast, která má vyplnit zbytek výšky (grafy) */
+.grow {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+}
+
+/* kontejner pro oba grafy – vedle sebe; na mobilu pod sebe */
+.charts {
+  display: flex;
+  flex: 1 1 auto;
+  gap: 12px;
+}
+
+/* grafová karta – sloupec: header + obsah (graf vyplní zbytek) */
+.chartCard {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-width: 0; /* ať se smaže přetékání u Recharts */
+  min-height: 280px;
+}
+
+/* titulek grafu */
+.chartHeader {
+  font-weight: 700;
+  font-size: 14px;
+  color: #333;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 2px solid #111;
+}
+
+/* Vnitřek grafu – cíl pro ResponsiveContainer 100%×100% */
+.chartInner {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+}
+
+/* grid pro metriky (CO₂ / teplota / vlhkost) */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 8px;
+}
+.metricLabel {
+  font-size: 12px;
+  color: #777;
+}
+.metricValue {
+  font-size: clamp(22px, 3.6vw, 28px);
+  font-weight: 700;
+}
+
+/* responzivní úpravy */
+@media (max-width: 700px) {
+  body {
+    overflow-y: auto;
+  } /* na malých displejích dovol scroll */
+  .app {
+    gap: 8px;
+    padding: 8px;
+  }
+  .metrics {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .charts {
+    flex-direction: column;
+  } /* grafy pod sebe */
+  .title {
+    font-size: clamp(22px, 6vw, 40px);
+  }
+}
+@media (max-width: 420px) {
+  .metrics {
+    grid-template-columns: 1fr;
+  }
+}

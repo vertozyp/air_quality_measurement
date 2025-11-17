@@ -1,0 +1,6 @@
+fastapi
+uvicorn[standard]
+pydantic
+adafruit-circuitpython-scd4x
+adafruit-blinka
+python-dotenv
