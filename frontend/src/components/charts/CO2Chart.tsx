@@ -1,4 +1,4 @@
-import type { SeriesPoint } from "../common/api";
+import type { SeriesPoint } from "../../common/api";
 import {
   ResponsiveContainer,
   LineChart,
@@ -7,6 +7,7 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
+  ReferenceLine,
 } from "recharts";
 
 function formatTime(tsIso: string) {
@@ -14,7 +15,13 @@ function formatTime(tsIso: string) {
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 
-export default function SeriesChart({ data }: { data: SeriesPoint[] }) {
+export default function SeriesChart({
+  data,
+  threshold,
+}: {
+  data: SeriesPoint[];
+  threshold?: number;
+}) {
   if (!data || data.length === 0) {
     return (
       <div
@@ -43,6 +50,14 @@ export default function SeriesChart({ data }: { data: SeriesPoint[] }) {
             domain={[300, "dataMax+200"]}
             label={{ value: "ppm", angle: -90, position: "insideLeft" }}
           />
+          {typeof threshold === "number" && (
+            <ReferenceLine
+              y={threshold}
+              yAxisId="co2"
+              label={{ value: `Limit ${threshold} ppm`, position: "top" }}
+              stroke="red"
+            />
+          )}
           <Tooltip
             labelFormatter={(v) => new Date(v as string).toLocaleString()}
             formatter={(val, name) => [
