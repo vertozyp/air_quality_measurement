@@ -20,6 +20,14 @@ CREATE TABLE IF NOT EXISTS settings (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS daily_agg (
+    day_utc INTEGER PRIMARY KEY,
+    avg_co2_ppm REAL NOT NULL,
+    avg_temperature_c REAL,
+    avg_humidity_rh REAL,
+    samples INTEGER NOT NULL
+);
 """
 
 Path(DB_PATH).parent.mkdir(parents=True, exist_ok=True)
@@ -89,5 +97,47 @@ def set_settings(updates: Dict[str, str]) -> None:
         conn.executemany(
             "INSERT INTO settings(key, value) VALUES(?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
             list(updates.items()),
+        )
+        conn.commit()
+
+def prune_readings_older_than(cutoff_ts_utc: int) -> int:
+    """Smaže z readings vše, co je starší než cutoff. Vrací count smazaných řádků."""
+    with get_conn() as conn:
+        cur = conn.execute("DELETE FROM readings WHERE ts_utc < ?", (cutoff_ts_utc,))
+        conn.commit()
+        return cur.rowcount
+
+def aggregate_window(ts_from_utc: int, ts_to_utc: int):
+    """Vrátí (samples, avg_co2, avg_t, avg_rh) pro zadané <from,to) okno nebo None, pokud nejsou data."""
+    with get_conn() as conn:
+        cur = conn.execute(
+            """
+            SELECT COUNT(*) AS n,
+                   AVG(co2_ppm) AS a_co2,
+                   AVG(temperature_c) AS a_t,
+                   AVG(humidity_rh) AS a_rh
+            FROM readings
+            WHERE ts_utc >= ? AND ts_utc < ?
+            """,
+            (ts_from_utc, ts_to_utc),
+        )
+        n, a_co2, a_t, a_rh = cur.fetchone()
+        if not n or a_co2 is None:
+            return None
+        return int(n), float(a_co2), (None if a_t is None else float(a_t)), (None if a_rh is None else float(a_rh))
+
+def upsert_daily_agg(day_utc: int, samples: int, avg_co2: float, avg_t: float | None, avg_rh: float | None):
+    with get_conn() as conn:
+        conn.execute(
+            """
+            INSERT INTO daily_agg(day_utc, avg_co2_ppm, avg_temperature_c, avg_humidity_rh, samples)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(day_utc) DO UPDATE SET
+                avg_co2_ppm=excluded.avg_co2_ppm,
+                avg_temperature_c=excluded.avg_temperature_c,
+                avg_humidity_rh=excluded.avg_humidity_rh,
+                samples=excluded.samples
+            """,
+            (day_utc, avg_co2, avg_t, avg_rh, samples),
         )
         conn.commit()

@@ -3,7 +3,7 @@ import argparse, time, signal, sys
 from datetime import datetime, timezone
 
 from .config import SAMPLE_SECONDS
-from .db import insert_reading
+from .db import insert_reading, prune_readings_older_than
 from .sensors import MockSensor, SCD41Sensor
 
 RUNNING = True
@@ -36,6 +36,12 @@ def main():
         now_utc = int(time.time())
         data = sensor.read()
         insert_reading(now_utc, data["co2"], data["temperature"], data["humidity"])
+        try:
+            deleted = prune_readings_older_than(now_utc - 24 * 3600)
+            if deleted:
+                print(f"[retention] deleted {deleted} rows older than 24h")
+        except Exception as e:
+            print(f"[retention] prune failed: {e}")
         ts = datetime.fromtimestamp(now_utc, tz=timezone.utc).isoformat()
         print(f"{ts}  CO2={data['co2']:.0f}ppm  T={data['temperature']:.2f}°C  RH={data['humidity']:.1f}%")
         for _ in range(args.interval):
