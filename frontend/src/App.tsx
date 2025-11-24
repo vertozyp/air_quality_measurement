@@ -25,7 +25,6 @@ export default function App() {
 
   const { unlockAudio, beep } = useAlertAudio();
 
-  // --- původní načítání dat (BEZ ÚPRAV) ---
   useEffect(() => {
     let alive = true;
     async function loadInitial() {
@@ -62,7 +61,6 @@ export default function App() {
     };
   }, []);
 
-  // --- načítání limitů ---
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -87,7 +85,6 @@ export default function App() {
     };
   }, []);
 
-  // --- banner (vizuální alert) ---
   const alertActive = useMemo(() => {
     if (!now || !thresholds) return false;
     return (
@@ -96,7 +93,6 @@ export default function App() {
     );
   }, [now, thresholds]);
 
-  // --- PÍPÁNÍ: pro každý NOVÝ vzorek nad limitem ---
   const lastBeepedSampleRef = useRef<number | null>(null);
   useEffect(() => {
     if (!now || !thresholds) return;
@@ -106,14 +102,12 @@ export default function App() {
       now.humidity_rh >= thresholds.humidity_pct;
     if (!over) return;
 
-    // Zkus získat unikátní ID vzorku (ts / ts_utc / ts_iso)
     const ts: number | null =
       now.ts ??
       now.ts_iso ??
       (typeof now.ts_iso === "string" ? Date.parse(now.ts_iso) : null);
 
     if (ts == null) {
-      // Fallback: když timestamp nemáme, pípni (ale tohle by se stávat nemělo)
       beep();
       return;
     }
@@ -169,7 +163,6 @@ export default function App() {
         </div>
       </div>
 
-      {/* ⚙️ – klik zároveň odemkne AudioContext */}
       <SettingsFab
         onClick={() => {
           unlockAudio();

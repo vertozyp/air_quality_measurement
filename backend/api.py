@@ -81,7 +81,6 @@ def api_series(since_seconds: int = 86400) -> List[Dict]:
         })
     return out
 
-# Statická složka s React buildem
 FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend", "build")
 if os.path.isdir(FRONTEND_DIR):
     app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="static")

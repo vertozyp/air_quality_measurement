@@ -1,4 +1,3 @@
-"""Collector – periodicky čte ze senzoru a ukládá do SQLite."""
 import argparse, time, signal, sys
 from datetime import datetime, timezone
 
@@ -24,7 +23,7 @@ def main():
 
     if args.sensor == "scd41":
         if SCD41Sensor is None:
-            print("SCD41 knihovna není dostupná – nainstaluj adafruit-circuitpython-scd4x a adafruit-blinka.")
+            print("SCD41 library is unavailable – install adafruit-circuitpython-scd4x and adafruit-blinka.")
             sys.exit(1)
         sensor = SCD41Sensor()
     else:

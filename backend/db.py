@@ -40,10 +40,10 @@ def get_conn():
     finally:
         conn.close()
 
-# Inicializace DB + defaulty
+# DB initialization + default values
 with get_conn() as conn:
     conn.executescript(SCHEMA)
-    # default limity – CO₂ 1000 ppm, vlhkost 60 %
+    # default limits – CO₂ 1000 ppm, moisture 60 %
     conn.execute("INSERT OR IGNORE INTO settings(key,value) VALUES('co2_threshold_ppm','1000')")
     conn.execute("INSERT OR IGNORE INTO settings(key,value) VALUES('humidity_threshold_pct','60')")
     conn.commit()
@@ -84,7 +84,7 @@ def get_settings(keys: Optional[Iterable[str]] = None) -> Dict[str, str]:
     if keys:
         placeholders = ",".join(["?"] * len(list(keys)))
         q += f" WHERE key IN ({placeholders})"
-        params = tuple(keys)  # type: ignore
+        params = tuple(keys)
     with get_conn() as conn:
         cur = conn.execute(q, params)
         return {k: v for k, v in cur.fetchall()}
@@ -101,14 +101,12 @@ def set_settings(updates: Dict[str, str]) -> None:
         conn.commit()
 
 def prune_readings_older_than(cutoff_ts_utc: int) -> int:
-    """Smaže z readings vše, co je starší než cutoff. Vrací count smazaných řádků."""
     with get_conn() as conn:
         cur = conn.execute("DELETE FROM readings WHERE ts_utc < ?", (cutoff_ts_utc,))
         conn.commit()
         return cur.rowcount
 
 def aggregate_window(ts_from_utc: int, ts_to_utc: int):
-    """Vrátí (samples, avg_co2, avg_t, avg_rh) pro zadané <from,to) okno nebo None, pokud nejsou data."""
     with get_conn() as conn:
         cur = conn.execute(
             """

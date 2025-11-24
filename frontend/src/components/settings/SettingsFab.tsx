@@ -7,7 +7,6 @@ export default function SettingsFab({ onClick }: { onClick: () => void }) {
       title="Nastavení"
       onClick={onClick}
     >
-      {/* jednoduché řešení – emoji. Kdybys chtěl SVG, řekni. */}
       <span style={{ fontSize: 22, lineHeight: 1 }}>⚙️</span>
     </button>
   );

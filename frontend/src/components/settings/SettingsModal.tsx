@@ -15,7 +15,6 @@ export default function SettingsModal({
   thresholds,
   onChange,
 }: Props) {
-  // zavření na Escape
   useEffect(() => {
     if (!open) return;
     const h = (e: KeyboardEvent) => {

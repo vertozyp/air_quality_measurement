@@ -1,5 +1,3 @@
-# Wrapper pro Sensirion SCD41 (NDIR CO₂ + T + RH) přes I²C
-# Počítá s balíčky: adafruit-circuitpython-scd4x a adafruit-blinka
 import time
 import board, busio
 import adafruit_scd4x
@@ -11,19 +9,19 @@ class SCD41Sensor:
         i2c = busio.I2C(board.SCL, board.SDA)
         self._scd = adafruit_scd4x.SCD4X(i2c)
 
-        # volitelně: nadmořská výška kvůli tlaku
+        # setting altitude for more precise measurements
         if ALTITUDE_M is not None:
             try:
                 self._scd.altitude = int(ALTITUDE_M)
             except Exception:
                 pass
 
-        # Spustíme periodická měření; self_test nepoužíváme
+        # start periodic measurements
         self._scd.start_periodic_measurement()
-        time.sleep(5)  # první platné vzorky
+        time.sleep(5)
 
     def read(self):
-        # pokud jsou data připravena, přečti je; jinak krátce počkej a vrať poslední
+        # if data is ready, read it, otherwise wait a while and return last measured data
         if getattr(self._scd, "data_ready", False):
             return {
                 "co2": float(self._scd.CO2),

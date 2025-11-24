@@ -16,20 +16,20 @@ body,
 
 body {
   margin: 0;
-  background: #1f1f1f; /* tmavé pozadí mimo karty */
+  background: #1f1f1f; /* default dark background */
   color: #eaeaea;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell,
     "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow: hidden; /* žádný scrollbar na desktopu */
+  overflow: hidden; /* no scrollbar on desktop */
 }
 
-/* kořen aplikace – vyplní viewport */
+/* app root – fill viewport */
 .app {
   height: 100vh; /* fallback */
-  height: 100dvh; /* správná výška i na mobilech */
+  height: 100dvh; /* correct height on mobile */
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -38,7 +38,7 @@ body {
   margin: 0 auto;
 }
 
-/* typografie */
+/* typography */
 .title {
   font-weight: 800;
   margin: 0;
@@ -50,7 +50,7 @@ body {
   color: #a7b0b9;
 }
 
-/* bílé karty s černým textem */
+/* white cards with black text */
 .card {
   background: #fff;
   color: #111;
@@ -59,30 +59,30 @@ body {
   padding: 16px;
 }
 
-/* oblast, která má vyplnit zbytek výšky (grafy) */
+/* area that should fill the remaining height (charts) */
 .grow {
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
 }
 
-/* kontejner pro oba grafy – vedle sebe; na mobilu pod sebe */
+/* container for both charts – side by side; on mobile stacked */
 .charts {
   display: flex;
   flex: 1 1 auto;
   gap: 12px;
 }
 
-/* grafová karta – sloupec: header + obsah (graf vyplní zbytek) */
+/* chart card – column: header + content (chart fills the rest) */
 .chartCard {
   display: flex;
   flex-direction: column;
   flex: 1 1 0;
-  min-width: 0; /* ať se smaže přetékání u Recharts */
+  min-width: 0; /* to prevent overflow in Recharts */
   min-height: 280px;
 }
 
-/* titulek grafu */
+/* chart title */
 .chartHeader {
   font-weight: 700;
   font-size: 14px;
@@ -92,14 +92,14 @@ body {
   border-bottom: 2px solid #111;
 }
 
-/* Vnitřek grafu – cíl pro ResponsiveContainer 100%×100% */
+/* inside of chart – target for ResponsiveContainer 100%×100% */
 .chartInner {
   flex: 1 1 auto;
   width: 100%;
   height: 100%;
 }
 
-/* grid pro metriky (CO₂ / teplota / vlhkost) */
+/* metrics grid (CO₂ / temperature / humidity) */
 .metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -115,11 +115,11 @@ body {
   font-weight: 700;
 }
 
-/* responzivní úpravy */
+/* responsive adjustments for small screens */
 @media (max-width: 700px) {
   body {
     overflow-y: auto;
-  } /* na malých displejích dovol scroll */
+  } /* allow scroll */
   .app {
     gap: 8px;
     padding: 8px;
@@ -130,7 +130,7 @@ body {
   }
   .charts {
     flex-direction: column;
-  } /* grafy pod sebe */
+  } /* charts stacked */
   .title {
     font-size: clamp(22px, 6vw, 40px);
   }

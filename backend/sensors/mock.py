@@ -1,10 +1,8 @@
 import math, random, time
 
 class MockSensor:
-    """Mock generátor realistických hodnot pro vývoj bez HW."""
     def __init__(self):
         self._t0 = time.time()
-        # výchozí baseline poblíž 800 ppm, vlhkost 45 %, teplota 22 °C
         self._base_co2 = 800.0
         self._base_rh = 45.0
         self._base_t = 22.0

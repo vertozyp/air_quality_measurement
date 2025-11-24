@@ -1,4 +1,3 @@
-# backend/aggregate.py
 from datetime import datetime, timezone, timedelta
 from .db import aggregate_window, upsert_daily_agg
 

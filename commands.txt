@@ -1,0 +1,7 @@
+sudo systemctl restart co2-api co2-collector
+
+sudo systemctl list-units --type=service --all
+journalctl -u co2-api -f
+
+sqlite3 ./rpi-co2/data/co2.sqlite 'select datetime(day_utc,"unixepoch"), avg_co2_ppm from daily_agg'
+sqlite3 ./rpi-co2/data/co2.sqlite 'select count(*) from readings;'
