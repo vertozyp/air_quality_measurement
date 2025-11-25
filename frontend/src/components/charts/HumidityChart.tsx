@@ -46,6 +46,7 @@ export default function HumidityChart({
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="ts_iso" tickFormatter={formatTime} minTickGap={32} />
           <YAxis
+            yAxisId="%"
             domain={[0, 100]}
             label={{ value: "%", angle: -90, position: "insideLeft" }}
           />
@@ -62,6 +63,7 @@ export default function HumidityChart({
             formatter={(val) => [Math.round(val as number), "Rel. vlhkost (%)"]}
           />
           <Line
+            yAxisId="%"
             type="monotone"
             dataKey="humidity_rh"
             dot={false}
